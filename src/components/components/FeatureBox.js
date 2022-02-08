@@ -27,7 +27,7 @@ const featurebox= () => (
                         <h4 className="">Set up your wallet</h4>
                       </Reveal>
                       <Reveal className='onStep' keyframes={fadeInUp} delay={200} duration={600} triggerOnce>
-                        <p className="">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem.</p>
+                        <p className="">Once you’ve set up your wallet,connect it to Tkex and Enjoy fast,hassle-free purchase/sell process</p>
                       </Reveal>
                     </div>
                     <i className="wm icon_wallet"></i>
@@ -44,7 +44,7 @@ const featurebox= () => (
                       <h4 className="">Add your NFT's</h4>
                     </Reveal>
                     <Reveal className='onStep' keyframes={fadeInUp} delay={200} duration={600} triggerOnce>
-                      <p className="">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem.</p>
+                      <p className="">Create your own NFT in easy steps,upload your work add Title,Description,Price and Let the world know about it through us</p>
                     </Reveal>
                   </div>
                   <i className="wm icon_cloud-upload_alt"></i>
@@ -61,7 +61,7 @@ const featurebox= () => (
                       <h4 className="">Sell your NFT's</h4>
                     </Reveal>
                     <Reveal className='onStep' keyframes={fadeInUp} delay={200} duration={600} triggerOnce>
-                      <p className="">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem.</p>
+                      <p className="">Sell your work/collections to the right Price at the right place and get benefitted.</p>
                     </Reveal>
                   </div>
                   <i className="wm icon_tags_alt"></i>
