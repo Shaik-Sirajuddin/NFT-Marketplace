@@ -124,12 +124,14 @@ export default class Createpage extends Component {
       //chainId: 4
 
     };
+    try{
     let transaction = await contract.createToken(url, overrides)
     let tx = await transaction.wait()
     let event = tx.events[0]
     let value = event.args[2]
     let tokenId = value.toNumber()
-
+    
+  
     const price = ethers.utils.parseUnits(this.state.formInput.price, 'ether')
 
     /* then list the item for sale on the marketplace */
@@ -140,9 +142,10 @@ export default class Createpage extends Component {
     transaction = await contract.createMarketItem(nftContractAddress, tokenId, price, { value: listingPrice })
     await transaction.wait()
     alert("Wow! NFT created")
+    }catch(e){ 
+       alert("An error occurred");
+    }
   }
-
-  
 
 
   render() {
