@@ -162,7 +162,7 @@ export default class Responsive extends Component {
                   }
                 {this.state.nfts.map((nft, index) => (
                     <div key={index} className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-4">
-                        <Link to='/ItemDetail' state={{ from:nft }}>
+                        <Link to='/ItemDetail' style={{ textDecoration: 'none' }} state={{ from:nft }}>
                         <div className="nft__item m-0">
                            
                             {/* <div className="author_list_pp">
@@ -177,7 +177,7 @@ export default class Responsive extends Component {
                                 </span>
                             </div>
                             <div className="nft__item_info">
-                                <Link to='/ItemDetail' state={{ from:nft }}>
+                                <Link to='/ItemDetail' style={{ textDecoration: 'none' }} state={{ from:nft }}>
                                     <span>
                                         <h4>{nft.name}</h4>
                                     </span>
