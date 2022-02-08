@@ -26,6 +26,7 @@ const Colection = function (props) {
 
   // const location = useLocation()
   const data = props.location.state.from;
+  const isBuy = props.location.state.isBuy
   console.log(data);
   const [alert,setAlert] = React.useState(false);
   const [alertMsg,setAlertMsg] = React.useState(" ");
@@ -128,10 +129,11 @@ const Colection = function (props) {
               </div>
               <p>{data.description}</p>
               {/* <h5>Price</h5> */}
-              <input type="number" name="item_price" id="item_price" className="form-control" placeholder="enter price to Buy (ETH)" onChange={(e) => {
+             {!isBuy && <input type="number" name="item_price" id="item_price" className="form-control" placeholder="enter price to Buy (ETH)" onChange={(e) => {
                 setSellprice(e.target.value);
                 // console.log(sell_price);
-              }} />
+              }
+              } />}
 
               {spinBuy &&
                 <div className="container">
@@ -148,10 +150,10 @@ const Colection = function (props) {
                 </div>
               }
 
-              {data.buySell &&
+              {isBuy &&
 
                 <input type="button" value="Buy Now" disabled={disableBuySell} className="btn-main" onClick={() => { buyNft(data) }} />}
-              {!data.buySell && <input type="button" value="Sell Now" disabled={disableBuySell} className="btn-main" onClick={() => { sellNft(data) }} />}
+              {!isBuy&& <input type="button" value="Sell Now" disabled={disableBuySell} className="btn-main" onClick={() => { sellNft(data) }} />}
 
 
 
