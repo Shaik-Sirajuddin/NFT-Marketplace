@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Clock from "../components/components/Clock";
+import { Spinner} from "react-bootstrap";
 import { ethers } from 'ethers'
 import axios from 'axios'
 import Web3Modal, { getChainId } from "web3modal"
@@ -23,7 +24,9 @@ export default class Responsive extends Component {
         let isHome = props.home
         this.state = {
             nfts: this.nftsList.slice(0, 8),
-            height: 0
+            height: 0,
+            ProgressBar: true,
+            mynftsnull: false,
         };
         this.fectchAndLoadNfts(isHome)
         this.onImgLoad = this.onImgLoad.bind(this);
@@ -47,6 +50,7 @@ export default class Responsive extends Component {
               name: meta.data.name,
               description: meta.data.description,
             }
+            this.setState({ProgressBar:false});
             return item
           }))
           this.nftsList = items
@@ -75,8 +79,12 @@ export default class Responsive extends Component {
           const data = await marketContract.fetchMyNFTs()
           if(!data){
               this.setState({
-                  nfts:[]
+                  nfts:[],
+                  ProgressBar:false,
+                  mynftsnull:true,
               })
+            //   this.setState({ProgressBar:false});
+
               return
           } 
           const items = await Promise.all(data.map(async i => {
@@ -90,17 +98,21 @@ export default class Responsive extends Component {
               owner: i.owner,
               image: meta.data.image,
             }
+
             return item
           }))
           this.nftsList = items
           this.setState({
               nfts: this.nftsList.slice(0, 8),
+              ProgressBar:false,
+              mynftsnull:true,
           });
 
     }
     async fectchAndLoadNfts(home){
         if(home){
             await this.fetchMarketItems()
+
         }
         else{
             await this.fecthMyAssets()
@@ -127,6 +139,27 @@ export default class Responsive extends Component {
         return (
             <div className='row'>
                 <div className="my-3">Explore </div>
+                {this.state.ProgressBar &&
+                   
+                    <div className="container">
+                         <br />
+                    <Spinner
+                      as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    />
+                    Loading NFT's...
+                    <br /><br />
+
+                  </div>
+                  }
+                  { this.state.mynftsnull &&
+                      <div className="container">
+                          <h3>Empty Collection Go Buy some NFT's</h3>
+                      </div>
+                  }
                 {this.state.nfts.map((nft, index) => (
                     <div key={index} className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-4">
                         <Link to='/ItemDetail' state={{ from:nft }}>
@@ -153,7 +186,7 @@ export default class Responsive extends Component {
                                     {nft.price + " ETH"} 
                                 </div>
                                 <div className="nft__item_action" style={{"marginBlock":15}}>
-                                    <span onClick={() => window.open(nft.bidLink, "_self")}>Buy now </span>
+                                    <span onClick={() => window.open(nft.bidLink, "_self")}>Sell Now </span>
                                 
                                 </div>
                                 
