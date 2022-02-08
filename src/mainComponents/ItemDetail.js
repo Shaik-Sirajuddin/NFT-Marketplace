@@ -74,6 +74,10 @@ const Colection = function (props) {
     console.log("buy failed");
     setAlertMsg("buy failed");
     setAlert(true);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
     }
 
   }
@@ -89,6 +93,10 @@ const Colection = function (props) {
     setDisableBuySell(false);
     setAlertMsg("sell failed");
     setAlert(true);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
     }
 
 

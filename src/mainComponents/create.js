@@ -71,18 +71,30 @@ export default class Createpage extends Component {
       // alert("Fill all fields");
       this.setState({ buttonDisable: false,alertMsg:"Fill all fields" });
       this.setState({alert:true});
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      })
       return
     }
     if (!parseFloat(price)) {
       // alert("Invalid price")
       this.setState({ buttonDisable: false,alertMsg:"invalid price" });
       this.setState({alert:true});
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
       return
     }
     if (!this.state.file) {
       // alert("No Image Uploaded")
       this.setState({ buttonDisable: false,alertMsg:"no image uploaded !" });
       this.setState({alert:true});
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
       return
     }
     this.setState({ show: true, buttonDisable: true });
@@ -102,6 +114,10 @@ export default class Createpage extends Component {
       // alert("Error uploading file");
       this.setState({ buttonDisable: false,alertMsg:"Error uploading file"});
       this.setState({alert:true});
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
       console.log('Error uploading file: ', error)
     }
   }
@@ -116,6 +132,10 @@ export default class Createpage extends Component {
       this.setState({alertMsg:"You are connected to wrong network! Please switch your connection to rinkeby testnetwork"});
       this.setState({ buttonDisable: false });
       this.setState({alert:true});
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
       return
     }
     const signer = provider.getSigner()
@@ -159,10 +179,18 @@ export default class Createpage extends Component {
       // alert("Wow! NFT created")
       this.setState({alertMsg:"Wow! NFT created"});
       this.setState({alert:true});
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
     } catch (e) {
       // alert("error occurred");
       this.setState({ show: false, buttonDisable: false,alertMsg:"error occurred"});
       this.setState({alert:true});
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
     }
     // this.setState({buttonDisable:false});
 
@@ -184,9 +212,9 @@ export default class Createpage extends Component {
           <div className='mainbreadcumb'>
             <div className='container'>
               {
-                this.state.alert && <Alert variant="dark" onClose={() => this.setState({ alert: false })}>
+                this.state.alert && <Alert variant="dark" style={{'opacity':0.2}} onClose={() => this.setState({ alert: false })}>
                   <MdOutlineClose style={{"float":'right'}} onClick={() => this.setState({ alert: false })} />
-                  <Alert.Heading>{this.state.alertMsg}</Alert.Heading>
+                  <Alert.Heading style={{'color':'black'}}>{this.state.alertMsg}</Alert.Heading>
                 </Alert>
               }
               <div className='row m-10-hor'>
