@@ -87,7 +87,7 @@ const Colection = function (props) {
                     setSellprice(e.target.value);
                     console.log(sell_price);
                   }} />
-              <input type="button" value="Sell Now" className="btn-main" onClick={()=>{buyNft(data)}}/>
+              <input type="button" value="Buy Now" className="btn-main" onClick={()=>{buyNft(data)}}/>
 
 
 
