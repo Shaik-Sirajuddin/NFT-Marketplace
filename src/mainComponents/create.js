@@ -23,6 +23,7 @@ export default class Createpage extends Component {
     this.state = {
       file: '',
       show:false,
+      buttonDisable:false,
       preImg: '',
       formInput: {
         name: 'Pinky Ocean',
@@ -57,6 +58,7 @@ export default class Createpage extends Component {
 
     } catch (error) {
       console.log('Error uploading file: ', error)
+      this.setState({buttonDisable:false});
     }
   }
   async createItem() {
@@ -64,17 +66,20 @@ export default class Createpage extends Component {
     let { name, description, price } = this.state.formInput
     if (!name || !description || !price) {
       alert("Fill all fields");
+      this.setState({buttonDisable:false});
       return
     }
     if (!parseFloat(price)) {
       alert("Invalid price")
+      this.setState({buttonDisable:false});
       return
     }
     if (!this.state.file) {
       alert("No Image Uploaded")
+      this.setState({buttonDisable:false});
       return
     }
-    this.setState({show:true});
+    this.setState({show:true,buttonDisable:true});
     const data = JSON.stringify({
       name, description, image: this.state.file
     })
@@ -85,10 +90,11 @@ export default class Createpage extends Component {
       /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
       this.createSale(url)
       
-      this.setState({show:false});
+      
         
     } catch (error) {
-      alert("Error uploading file")
+      alert("Error uploading file");
+      this.setState({buttonDisable:false});
       console.log('Error uploading file: ', error)
     }
   }
@@ -99,7 +105,8 @@ export default class Createpage extends Component {
 
     const { chainId } = await provider.getNetwork()
     if (chainId != 4) {
-      alert("You are connected to wrong network! Please switch your connection to rinkeby testnetwork")
+      alert("You are connected to wrong network! Please switch your connection to rinkeby testnetwork");
+      this.setState({buttonDisable:false});
       return
     }
     const signer = provider.getSigner()
@@ -124,7 +131,7 @@ export default class Createpage extends Component {
       //chainId: 4
 
     };
-    let transaction = await contract.createToken(url, overrides)
+    try{let transaction = await contract.createToken(url, overrides)
     let tx = await transaction.wait()
     let event = tx.events[0]
     let value = event.args[2]
@@ -140,6 +147,12 @@ export default class Createpage extends Component {
     transaction = await contract.createMarketItem(nftContractAddress, tokenId, price, { value: listingPrice })
     await transaction.wait()
     alert("Wow! NFT created")
+  }catch(e){
+      alert("error occurred");
+      this.setState({show:false,buttonDisable:false});
+  }
+    // this.setState({buttonDisable:false});
+    
   }
 
   
@@ -209,14 +222,18 @@ export default class Createpage extends Component {
                       aria-hidden="true"
                     />
                     Creating...
+                    <br />
+                    Accept the transaction in your MetaMask to complete transaction
                   </div>
                   }
                   <br />
                   <input onClick={() => {
 
-                    this.createItem()
+                    this.createItem();
+                    console.log("clicked");
+                    // this.setState({buttonDisable:true});
                     
-                  }} type="button" id="submit" className="btn-main" value="Create Item" />
+                  }} type="button" id="submit" disabled={this.state.buttonDisable} className="btn-main" value="Create Item" />
 
 
 
