@@ -14,15 +14,15 @@ import {
     walletAddress,
     connectedChainId
 } from '../Blockchain/config'
-
+var isHome = false
 export default class Responsive extends Component {
-
+  
     nftsList = []
 
     constructor(props) {
         super(props);
-        let isHome = props.home
-        this.state = {
+            isHome = props.home
+            this.state = {
             nfts: this.nftsList.slice(0, 8),
             height: 0,
             ProgressBar: true,
@@ -60,6 +60,8 @@ export default class Responsive extends Component {
         
     }
     async fecthMyAssets(){
+        try{
+
         const web3Modal = new Web3Modal({
             network: "mainnet",
             cacheProvider: true,
@@ -77,16 +79,7 @@ export default class Responsive extends Component {
           const tokenContract = new ethers.Contract(nftContractAddress, nftContractABI, signer)
           const marketContract = new ethers.Contract(marketplaceContractAdress, marketplaceABI, signer)
           const data = await marketContract.fetchMyNFTs()
-          if(!data){
-              this.setState({
-                  nfts:[],
-                  ProgressBar:false,
-                  mynftsnull:true,
-              })
-            //   this.setState({ProgressBar:false});
-
-              return
-          } 
+        
           const items = await Promise.all(data.map(async i => {
             const tokenUri = await tokenContract.tokenURI(i.tokenId)
             const meta = await axios.get(tokenUri)
@@ -105,14 +98,16 @@ export default class Responsive extends Component {
           this.setState({
               nfts: this.nftsList.slice(0, 8),
               ProgressBar:false,
-              mynftsnull:true,
+              mynftsnull:this.nftsList.size===0
           });
-
+        }
+        catch(e){
+            
+        }
     }
     async fectchAndLoadNfts(home){
         if(home){
             await this.fetchMarketItems()
-
         }
         else{
             await this.fecthMyAssets()
@@ -155,14 +150,16 @@ export default class Responsive extends Component {
 
                   </div>
                   }
-                  { this.state.mynftsnull &&
+                  { isHome?<div className="container">
+                      No items to show
+                  </div>:this.state.mynftsnull &&
                       <div className="container">
                           <h3>Empty Collection Go Buy some NFT's</h3>
                       </div>
                   }
                 {this.state.nfts.map((nft, index) => (
                     <div key={index} className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-4">
-                        <Link to='/ItemDetail' state={{ from:nft }}>
+                        <Link to='/ItemDetail' state={{ from:nft ,isBuy:isHome}}>
                         <div className="nft__item m-0">
                            
                             {/* <div className="author_list_pp">
@@ -177,7 +174,7 @@ export default class Responsive extends Component {
                                 </span>
                             </div>
                             <div className="nft__item_info">
-                                <Link to='/ItemDetail' state={{ from:nft }}>
+                                <Link to='/ItemDetail' state={{ from:nft ,isBuy:isHome }}>
                                     <span>
                                         <h4>{nft.name}</h4>
                                     </span>
@@ -186,8 +183,11 @@ export default class Responsive extends Component {
                                     {nft.price + " ETH"} 
                                 </div>
                                 <div className="nft__item_action" style={{"marginBlock":15}}>
-                                    <span onClick={() => window.open(nft.bidLink, "_self")}>Sell Now </span>
-                                
+                                    {
+                                        isHome?   <span onClick={() => window.open(nft.bidLink, "_self")}> Buy Now </span> :
+                                        <span onClick={() => window.open(nft.bidLink, "_self")}> Sell Now </span>
+                                    }
+            
                                 </div>
                                 
                                 

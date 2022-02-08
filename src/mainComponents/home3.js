@@ -99,31 +99,7 @@ const game3 = () => (
       </div>
     </section>
 
-    {/* <section className='container no-top'>
-      <div className='row'>
-        <div className='col-lg-12'>
-          <h2 className='style-2'>Hot Collections</h2>
-        </div>
-      </div>
-      <div className='container no-top'>
-        <div className='row'>
-          <div className='col-lg-12 px-0'>
-            <CarouselCollection />
-          </div>
-        </div>
-      </div>
-    </section> */}
-
-    {/* <section className='container no-top'>
-      <div className='row'>
-        <div className='col-lg-12'>
-          <h2 className='style-2'>Top Seller</h2>
-        </div>
-        <div className='col-lg-12'>
-          <AuthorList />
-        </div>
-      </div>
-    </section> */}
+   
 
      <section className='container no-top'>
       <div className='row'>
