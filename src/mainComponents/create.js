@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Clock from "../components/components/Clock";
 import Footer from '../components/components/footer';
+import { Spinner, Button } from "react-bootstrap";
 import { create as ipfsHttpClient } from 'ipfs-http-client'
 import Web3Modal from 'web3modal'
 import { ethers } from 'ethers'
@@ -15,30 +16,32 @@ import {
 const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
 
 export default class Createpage extends Component {
-  
-constructor() {
+
+  constructor() {
     super();
     this.onChange = this.onChange.bind(this);
     this.state = {
       file: '',
-      preImg:'',
-      formInput:{
-        name:'Pinky Ocean',
-        description:'desHere',
+      show:false,
+      preImg: '',
+      formInput: {
+        name: 'Pinky Ocean',
+        description: 'desHere',
         price: 0.08
       }
     };
-     this.state.preImg="./img/collections/coll-item-3.jpg";
-  }  
+    this.state.preImg = "./img/collections/coll-item-3.jpg";
+  
+  }
 
-   async onChange(e) { 
+  async onChange(e) {
     var file = e.target.files[0];
-    if(!file){
-      return 
+    if (!file) {
+      return
     }
     let previewUrl = URL.createObjectURL(file)
     this.setState({
-      preImg:previewUrl
+      preImg: previewUrl
     })
     console.log(this.state.imgSrc)
     try {
@@ -50,92 +53,102 @@ constructor() {
       )
       const url = `https://ipfs.infura.io/ipfs/${added.path}`
       console.log(url)
-      this.setState({file:url})
-      
+      this.setState({ file: url })
+
     } catch (error) {
       console.log('Error uploading file: ', error)
-    }  
-  }
-async createItem(){
-
-  let {name,description,price} = this.state.formInput
-  if(!name || !description || !price){
-    alert("Fill all fields");
-    return
-  }
-  if(!parseFloat(price)){
-    alert("Invalid price")
-    return
-  } 
-  if(!this.state.file){
-    alert("No Image Uploaded")
-    return
-  }
-  const data = JSON.stringify({
-    name, description, image: this.state.file
-  })
-  try {
-    const added = await client.add(data)
-    const url = `https://ipfs.infura.io/ipfs/${added.path}`
-    console.log("jsonUrl : "+url)
-    /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
-    this.createSale(url)
-  } catch (error) {
-    alert("Error uploading file")
-    console.log('Error uploading file: ', error)
-  }  
-}
-async  createSale(url) {
-  const web3Modal = new Web3Modal()
-  const connection = await web3Modal.connect()
-  const provider = new ethers.providers.Web3Provider(connection)    
-
-  const { chainId } = await provider.getNetwork()
-  if(chainId!=4){
-      alert("You are connected to wrong network! Please switch your connection to rinkeby testnetwork")
-     return
     }
-  const signer = provider.getSigner()
+  }
+  async createItem() {
+
+    let { name, description, price } = this.state.formInput
+    if (!name || !description || !price) {
+      alert("Fill all fields");
+      return
+    }
+    if (!parseFloat(price)) {
+      alert("Invalid price")
+      return
+    }
+    if (!this.state.file) {
+      alert("No Image Uploaded")
+      return
+    }
+    this.setState({show:true});
+    const data = JSON.stringify({
+      name, description, image: this.state.file
+    })
+    try {
+      const added = await client.add(data)
+      const url = `https://ipfs.infura.io/ipfs/${added.path}`
+      console.log("jsonUrl : " + url)
+      /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
+      this.createSale(url)
+      
+      this.setState({show:false});
+        
+    } catch (error) {
+      alert("Error uploading file")
+      console.log('Error uploading file: ', error)
+    }
+  }
+  async createSale(url) {
+    const web3Modal = new Web3Modal()
+    const connection = await web3Modal.connect()
+    const provider = new ethers.providers.Web3Provider(connection)
+
+    const { chainId } = await provider.getNetwork()
+    if (chainId != 4) {
+      alert("You are connected to wrong network! Please switch your connection to rinkeby testnetwork")
+      return
+    }
+    const signer = provider.getSigner()
+
+    /* next, create the item */
+    let contract = new ethers.Contract(nftContractAddress, nftContractABI, signer)
+    let overrides = {
+
+      // The maximum units of gas for the transaction to use
+      gasLimit: 300000,
+
+      // The price (in wei) per unit of gas
+      //  gasPrice: utils.parseUnits('9.0', 'gwei'),
+
+      // The nonce to use in the transaction
+      //nonce: 123,
+
+      // The amount to send with the transaction (i.e. msg.value)
+      //value: utils.parseEther('1.0'),
+
+      // The chain ID (or network ID) to use
+      //chainId: 4
+
+    };
+    let transaction = await contract.createToken(url, overrides)
+    let tx = await transaction.wait()
+    let event = tx.events[0]
+    let value = event.args[2]
+    let tokenId = value.toNumber()
+
+    const price = ethers.utils.parseUnits(this.state.formInput.price, 'ether')
+
+    /* then list the item for sale on the marketplace */
+    contract = new ethers.Contract(marketplaceContractAdress, marketplaceABI, signer)
+    let listingPrice = await contract.getListingPrice()
+    listingPrice = listingPrice.toString()
+
+    transaction = await contract.createMarketItem(nftContractAddress, tokenId, price, { value: listingPrice })
+    await transaction.wait()
+    alert("Wow! NFT created")
+  }
+
   
-  /* next, create the item */
-  let contract = new ethers.Contract(nftContractAddress, nftContractABI, signer)
-  let overrides = {
 
-    // The maximum units of gas for the transaction to use
-    gasLimit: 300000,
 
-    // The price (in wei) per unit of gas
-  //  gasPrice: utils.parseUnits('9.0', 'gwei'),
+  render() {
 
-    // The nonce to use in the transaction
-    //nonce: 123,
 
-    // The amount to send with the transaction (i.e. msg.value)
-    //value: utils.parseEther('1.0'),
 
-    // The chain ID (or network ID) to use
-    //chainId: 4
-
-};
-  let transaction = await contract.createToken(url,overrides)
-  let tx = await transaction.wait()
-  let event = tx.events[0]
-  let value = event.args[2]
-  let tokenId = value.toNumber()
-  
-  const price = ethers.utils.parseUnits(this.state.formInput.price, 'ether')
-
-  /* then list the item for sale on the marketplace */
-  contract = new ethers.Contract(marketplaceContractAdress, marketplaceABI, signer)
-  let listingPrice = await contract.getListingPrice()
-  listingPrice = listingPrice.toString()
-
-  transaction = await contract.createMarketItem(nftContractAddress, tokenId, price, { value: listingPrice })
-  await transaction.wait()
-  alert("Wow! NFT created")
-}
-
-render() {
     return (
       <div>
 
@@ -153,72 +166,98 @@ render() {
 
         <section className='container'>
 
-        <div className="row">
-          <div className="col-lg-7 offset-lg-1 mb-5">
+          <div className="row">
+            <div className="col-lg-7 offset-lg-1 mb-5">
               <form id="form-create-item" className="form-border" action="#">
-                  <div className="field-set">
-                      <h5>Upload file</h5>
+                <div className="field-set">
+                  <h5>Upload file</h5>
 
-                      <div className="d-create-file">
-                          <p id="file_name">PNG, JPG, GIF, WEBP . Max 200mb.</p>
-                         
-                          <div className='browse'>
-                            <input type="button" id="get_file" className="btn-main" value="Browse"/>
-                            <input id='upload_file' type="file" multiple onChange={this.onChange} />
-                          </div>
-                          
-                      </div>
+                  <div className="d-create-file">
+                    <p id="file_name">PNG, JPG, GIF, WEBP . Max 200mb.</p>
 
-                      <div className="spacer-single"></div>
+                    <div className='browse'>
+                      <input type="button" id="get_file" className="btn-main" value="Browse" />
+                      <input id='upload_file' type="file" multiple onChange={this.onChange} />
+                    </div>
 
-                      <h5>Title</h5>
-                      <input type="text" name="item_title" id="item_title" className="form-control" placeholder="e.g. 'Crypto Funk"   onChange={e => this.setState({formInput:{ ...this.state.formInput,name: e.target.value }})} />
-
-                      <div className="spacer-10"></div>
-
-                      <h5>Description</h5>
-                      <textarea data-autoresize name="item_desc" id="item_desc" className="form-control" placeholder="e.g. 'This is very limited item'" onChange={e => this.setState({formInput:{ ...this.state.formInput,description: e.target.value }})}></textarea>
-
-                      <div className="spacer-10"></div>
-
-                      <h5>Price</h5>
-                      <input type="text" name="item_price" id="item_price" className="form-control" placeholder="enter price for one item (ETH)"  onChange={e => this.setState({formInput:{ ...this.state.formInput, price: e.target.value }})} />
-
-                      <div className="spacer-10"></div>
-
-                      <input onClick={()=>{
-                        this.createItem()
-                      }} type="button" id="submit" className="btn-main" value="Create Item"/>
                   </div>
+
+                  <div className="spacer-single"></div>
+
+                  <h5>Title</h5>
+                  <input type="text" name="item_title" id="item_title" className="form-control" placeholder="e.g. 'Crypto Funk" onChange={e => this.setState({ formInput: { ...this.state.formInput, name: e.target.value } })} />
+
+                  <div className="spacer-10"></div>
+
+                  <h5>Description</h5>
+                  <textarea data-autoresize name="item_desc" id="item_desc" className="form-control" placeholder="e.g. 'This is very limited item'" onChange={e => this.setState({ formInput: { ...this.state.formInput, description: e.target.value } })}></textarea>
+
+                  <div className="spacer-10"></div>
+
+                  <h5>Price</h5>
+                  <input type="text" name="item_price" id="item_price" className="form-control" placeholder="enter price for one item (ETH)" onChange={e => this.setState({ formInput: { ...this.state.formInput, price: e.target.value } })} />
+
+                  {/* <div className="spacer-10"></div> */}
+
+                  {this.state.show &&
+                    <div className="container">
+                    <Spinner
+                      as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    />
+                    Creating...
+                  </div>
+                  }
+                  <br />
+                  <input onClick={() => {
+
+                    this.createItem()
+                    
+                  }} type="button" id="submit" className="btn-main" value="Create Item" />
+
+
+
+
+
+                </div>
               </form>
+            </div>
+
+            <div className="col-lg-3 col-sm-6 col-xs-12">
+              <h5>Preview item </h5>
+              <div className="nft__item m-0">
+                <div className="nft__item_wrap">
+                  <span>
+                    <img src={this.state.preImg} id="get_file_2" className="lazy nft__item_preview" alt="" />
+                  </span>
+                </div>
+                <div className="nft__item_info">
+                  <span >
+                    <h4> {this.state.formInput.name}</h4>
+                  </span>
+                  <div className="nft__item_price">
+                    {this.state.formInput.price} ETH
+                  </div>
+
+
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="col-lg-3 col-sm-6 col-xs-12">
-                  <h5>Preview item </h5>
-                  <div className="nft__item m-0">
-                      <div className="nft__item_wrap">
-                          <span>
-                              <img src={this.state.preImg} id="get_file_2" className="lazy nft__item_preview" alt=""/>
-                          </span>
-                      </div>
-                      <div className="nft__item_info">
-                          <span >
-                              <h4> {this.state.formInput.name}</h4>
-                          </span>
-                          <div className="nft__item_price">
-                             {this.state.formInput.price} ETH
-                          </div>
-                          
-                                                   
-                      </div> 
-                  </div>
-              </div>                                         
-      </div>
+          <>
 
-      </section>
+
+
+          </>
+
+        </section>
 
         <Footer />
       </div>
-   );
+    );
   }
 }

@@ -63,13 +63,15 @@ export default class Responsive extends Component {
     
           const connection = await web3Modal.connect()
           const provider = new ethers.providers.Web3Provider(connection)
+          const signer = provider.getSigner()
           const { chainId } = await provider.getNetwork()
           if(chainId!=4){
               alert("You are connected to wrong network! Please switch your connection to rinkeby testnetwork")
              return
             }
-          const tokenContract = new ethers.Contract(nftContractAddress, nftContractABI, provider)
-          const marketContract = new ethers.Contract(marketplaceContractAdress, marketplaceABI, provider)
+          
+          const tokenContract = new ethers.Contract(nftContractAddress, nftContractABI, signer)
+          const marketContract = new ethers.Contract(marketplaceContractAdress, marketplaceABI, signer)
           const data = await marketContract.fetchMyNFTs()
           if(!data){
               this.setState({
