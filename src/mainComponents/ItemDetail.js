@@ -82,12 +82,12 @@ const Colection = function (props) {
 
               </div>
               <p>{data.description}</p>
-              <h5>Price</h5>
-                  <input type="number" name="item_price" id="item_price" className="form-control" placeholder="enter price to Sell (ETH)" onChange={(e)=>{
+              {/* <h5>Price</h5> */}
+                  <input type="number" name="item_price" id="item_price" className="form-control" placeholder="enter price to Buy (ETH)" onChange={(e)=>{
                     setSellprice(e.target.value);
                     console.log(sell_price);
                   }} />
-              <input type="button" value="Sell Now" className="btn-main" onClick={()=>{buyNft(data)}}/>
+              <input type="button" value="Buy Now" className="btn-main" onClick={()=>{buyNft(data)}}/>
 
 
 
