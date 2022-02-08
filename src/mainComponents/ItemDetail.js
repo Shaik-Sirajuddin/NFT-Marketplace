@@ -61,6 +61,10 @@ const Colection = function (props) {
     await transaction.wait()
   
   }
+  async function sellNft(nft){
+
+
+  }
   return (
     <div>
       <GlobalStyles />
@@ -85,10 +89,11 @@ const Colection = function (props) {
               {/* <h5>Price</h5> */}
                   <input type="number" name="item_price" id="item_price" className="form-control" placeholder="enter price to Buy (ETH)" onChange={(e)=>{
                     setSellprice(e.target.value);
-                    console.log(sell_price);
+                    // console.log(sell_price);
                   }} />
-              <input type="button" value="Buy Now" className="btn-main" onClick={()=>{buyNft(data)}}/>
-
+              {data.buySell && <input type="button" value="Buy Now" className="btn-main" onClick={()=>{buyNft(data)}}/>}
+              {!data.buySell && <input type="button" value="Sell Now" className="btn-main" onClick={()=>{sellNft(data)}}/>}
+              
 
 
               <div className="spacer-40"></div>
