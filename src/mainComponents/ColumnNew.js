@@ -107,7 +107,6 @@ export default class Responsive extends Component {
           this.setState({
               nfts: this.nftsList.slice(0, 8),
               ProgressBar:false,
-              mynftsnull:true,
           });
 
     }

@@ -5,6 +5,7 @@ import ProgressButton from 'react-progress-button'
 import Web3Modal, { getChainId } from "web3modal"
 import { ethers } from 'ethers'
 import { useLocation } from "@reach/router";
+import { Spinner} from "react-bootstrap";
 import {
   nftContractAddress,
   marketplaceContractAdress,
@@ -27,7 +28,9 @@ const Colection = function (props) {
   console.log(data);
 
   const [openMenu, setOpenMenu] = React.useState(true);
-  const [sell_price,setSellprice] = React.useState(0);
+  const [sell_price, setSellprice] = React.useState(0);
+  const [spinBuy, setSpinBuy] = React.useState(false)
+  const [disableBuySell, setDisableBuySell] = React.useState(false)
   const [openMenu1, setOpenMenu1] = React.useState(false);
   const handleBtnClick = () => {
     setOpenMenu(!openMenu);
@@ -42,13 +45,16 @@ const Colection = function (props) {
     document.getElementById("Mainbtn").classList.remove("active");
   };
 
-  const handleClick3 = ()=>{
-    return new Promise(function(resolve, reject) {
+  const handleClick3 = () => {
+    return new Promise(function (resolve, reject) {
       setTimeout(resolve, 3000)
     })
   };
   async function buyNft(nft) {
-    const web3Modal = new Web3Modal()
+    setSpinBuy(true);
+    setDisableBuySell(true);
+    try{
+      const web3Modal = new Web3Modal()
     const connection = await web3Modal.connect()
     const provider = new ethers.providers.Web3Provider(connection)
     const signer = provider.getSigner()
@@ -59,9 +65,25 @@ const Colection = function (props) {
       value: price
     })
     await transaction.wait()
-  
+    }
+    catch(e){
+      setSpinBuy(false);
+    setDisableBuySell(false);
+    console.log("buy failed");
+    }
+
   }
-  async function sellNft(nft){
+  async function sellNft(nft) {
+    setSpinBuy(true);
+    setDisableBuySell(true);
+
+    try{
+
+    }
+    catch(e){
+      setSpinBuy(false);
+    setDisableBuySell(false);
+    }
 
 
   }
@@ -72,7 +94,7 @@ const Colection = function (props) {
       <section className='container'>
         <div className='row mt-md-5 pt-md-4'>
 
-          
+
 
           <div className="col-md-6 text-center">
             <img src={data.image} style={{ "maxBlockSize": 350 }} className="img-fluid img-rounded mb-sm-30" alt="" />
@@ -87,13 +109,31 @@ const Colection = function (props) {
               </div>
               <p>{data.description}</p>
               {/* <h5>Price</h5> */}
-                  <input type="number" name="item_price" id="item_price" className="form-control" placeholder="enter price to Buy (ETH)" onChange={(e)=>{
-                    setSellprice(e.target.value);
-                    // console.log(sell_price);
-                  }} />
-              {data.buySell && <input type="button" value="Buy Now" className="btn-main" onClick={()=>{buyNft(data)}}/>}
-              {!data.buySell && <input type="button" value="Sell Now" className="btn-main" onClick={()=>{sellNft(data)}}/>}
-              
+              <input type="number" name="item_price" id="item_price" className="form-control" placeholder="enter price to Buy (ETH)" onChange={(e) => {
+                setSellprice(e.target.value);
+                // console.log(sell_price);
+              }} />
+
+              {spinBuy &&
+                <div className="container">
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                  Processing...
+                  <br />
+                  {/* Accept the transaction in your MetaMask to complete transaction */}
+                </div>
+              }
+
+              {data.buySell &&
+
+                <input type="button" value="Buy Now" disabled={disableBuySell} className="btn-main" onClick={() => { buyNft(data) }} />}
+              {!data.buySell && <input type="button" value="Sell Now" disabled={disableBuySell} className="btn-main" onClick={() => { sellNft(data) }} />}
+
 
 
               <div className="spacer-40"></div>
