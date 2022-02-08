@@ -2,16 +2,22 @@ import React from "react";
 import Footer from '../components/components/footer';
 import { createGlobalStyle } from 'styled-components';
 import ProgressButton from 'react-progress-button'
-
+import Web3Modal, { getChainId } from "web3modal"
+import { ethers } from 'ethers'
 import { useLocation } from "@reach/router";
-
+import {
+  nftContractAddress,
+  marketplaceContractAdress,
+  nftContractABI,
+  marketplaceABI,
+  walletAddress,
+  connectedChainId
+} from '../Blockchain/config'
 const GlobalStyles = createGlobalStyle`
   header#myHeader.navbar.white {
     background: #212428;
   }
 `;
-
-
 
 
 const Colection = function (props) {
@@ -40,7 +46,20 @@ const Colection = function (props) {
       setTimeout(resolve, 3000)
     })
   };
+  async function buyNft(nft) {
+    const web3Modal = new Web3Modal()
+    const connection = await web3Modal.connect()
+    const provider = new ethers.providers.Web3Provider(connection)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(marketplaceContractAdress, marketplaceABI, signer)
 
+    const price = ethers.utils.parseUnits(nft.price.toString(), 'ether')
+    const transaction = await contract.createMarketSale(nftContractAddress, nft.itemId, {
+      value: price
+    })
+    await transaction.wait()
+  
+  }
   return (
     <div>
       <GlobalStyles />
@@ -58,11 +77,11 @@ const Colection = function (props) {
 
               <h2>{data.title}</h2>
               <div className="item_info_counts">
-                <div className="item_info_type"><i className="fa fa-image"></i>Art</div>
+                <div className="item_info_type"><i className="fa fa-image"></i>Artist</div>
 
               </div>
               <p>{data.description}</p>
-              <input type="button" value="Buy Now" className="btn-main" />
+              <input type="button" value="Buy Now" className="btn-main" onClick={()=>{buyNft(data)}}/>
 
 
 
