@@ -49,7 +49,6 @@ export default class Responsive extends Component {
               image: meta.data.image,
               name: meta.data.name,
               description: meta.data.description,
-              buySell:true,
             }
             this.setState({ProgressBar:false});
             return item
@@ -98,7 +97,6 @@ export default class Responsive extends Component {
               seller: i.seller,
               owner: i.owner,
               image: meta.data.image,
-              buySell:false,
             }
 
             return item
@@ -107,6 +105,7 @@ export default class Responsive extends Component {
           this.setState({
               nfts: this.nftsList.slice(0, 8),
               ProgressBar:false,
+              mynftsnull:true,
           });
 
     }
@@ -187,7 +186,7 @@ export default class Responsive extends Component {
                                     {nft.price + " ETH"} 
                                 </div>
                                 <div className="nft__item_action" style={{"marginBlock":15}}>
-                                    <span onClick={() => window.open(nft.bidLink, "_self")}>Buy Now </span>
+                                    <span onClick={() => window.open(nft.bidLink, "_self")}>Sell Now </span>
                                 
                                 </div>
                                 

@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import Footer from '../components/components/footer';
 import { createGlobalStyle } from 'styled-components';
 import ProgressButton from 'react-progress-button'
 import Web3Modal, { getChainId } from "web3modal"
 import { ethers } from 'ethers'
 import { useLocation } from "@reach/router";
-import { Spinner} from "react-bootstrap";
+import { Spinner,Alert} from "react-bootstrap";
+import{MdOutlineClose} from 'react-icons/md';
 import {
   nftContractAddress,
   marketplaceContractAdress,
@@ -26,7 +27,8 @@ const Colection = function (props) {
   // const location = useLocation()
   const data = props.location.state.from;
   console.log(data);
-
+  const [alert,setAlert] = React.useState(false);
+  const [alertMsg,setAlertMsg] = React.useState(" ");
   const [openMenu, setOpenMenu] = React.useState(true);
   const [sell_price, setSellprice] = React.useState(0);
   const [spinBuy, setSpinBuy] = React.useState(false)
@@ -70,6 +72,8 @@ const Colection = function (props) {
       setSpinBuy(false);
     setDisableBuySell(false);
     console.log("buy failed");
+    setAlertMsg("buy failed");
+    setAlert(true);
     }
 
   }
@@ -83,6 +87,8 @@ const Colection = function (props) {
     catch(e){
       setSpinBuy(false);
     setDisableBuySell(false);
+    setAlertMsg("sell failed");
+    setAlert(true);
     }
 
 
@@ -94,7 +100,12 @@ const Colection = function (props) {
       <section className='container'>
         <div className='row mt-md-5 pt-md-4'>
 
-
+              {
+                alert && <Alert variant="dark" onClose={() => setAlert(false)}>
+                  <MdOutlineClose style={{"float":'right'}} onClick={() => setAlert(false)} />
+                  <Alert.Heading>{alertMsg}</Alert.Heading>
+                </Alert>
+              }
 
           <div className="col-md-6 text-center">
             <img src={data.image} style={{ "maxBlockSize": 350 }} className="img-fluid img-rounded mb-sm-30" alt="" />
