@@ -58,7 +58,7 @@ const Colection = function (props) {
     setDisableBuySell(true);
     try{
       const web3Modal = new Web3Modal()
-    const connection = await web3Modal.connect()
+      const connection = await web3Modal.connect()
     const provider = new ethers.providers.Web3Provider(connection)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(marketplaceContractAdress, marketplaceABI, signer)
@@ -68,19 +68,23 @@ const Colection = function (props) {
       value: price
     })
     await transaction.wait()
+    setSpinBuy(false);
+    setDisableBuySell(true);
+    setAlertMsg("Wow! You own this Nft now")
+    setAlert(true)
     }
     catch(e){
       setSpinBuy(false);
-    setDisableBuySell(false);
-    console.log("buy failed");
-    setAlertMsg("buy failed");
-    setAlert(true);
-    window.scrollTo({
+      setDisableBuySell(false);
+      console.log("buy failed");
+      setAlertMsg("buy failed");
+      setAlert(true);
+      window.scrollTo({
       top: 0,
       behavior: "smooth"
-    });
+      });
     }
-
+    
   }
   async function sellNft(nft) {
     setSpinBuy(true);
