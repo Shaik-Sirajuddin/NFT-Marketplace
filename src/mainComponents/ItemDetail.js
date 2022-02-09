@@ -95,10 +95,10 @@ const Colection = function (props) {
     }
     catch(e){
       setSpinBuy(false);
-    setDisableBuySell(false);
-    setAlertMsg("sell failed");
-    setAlert(true);
-    window.scrollTo({
+      setDisableBuySell(false);
+      setAlertMsg("sell failed");
+      setAlert(true);
+      window.scrollTo({
       top: 0,
       behavior: "smooth"
     });
