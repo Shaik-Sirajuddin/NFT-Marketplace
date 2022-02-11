@@ -2,8 +2,8 @@
 var walletAddress = "";
 var connectedChainId ="";
 
-const nftContractAddress = "0x556750E25dDaDEd413ef394db46dB25056C9f4Ed";
-const marketplaceContractAdress = "0x005993D5e61023885e87771991e246A5fE370a25";
+const nftContractAddress = "0x521f21380350161E6a02C0FDd39320d93E8f3f05";
+const marketplaceContractAdress = "0x8EaC991394C576dbaF672a50c665366185A10ca5";
 
 const nftContractABI = [
 	{
@@ -368,7 +368,7 @@ const nftContractABI = [
 	}
 ]
 
-const marketplaceABI = [
+const marketplaceABI =[
 	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
@@ -625,6 +625,34 @@ const marketplaceABI = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "nftContract",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "itemId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "price",
+				"type": "uint256"
+			}
+		],
+		"name": "resellNft",
+		"outputs": [],
+		"stateMutability": "payable",
 		"type": "function"
 	}
 ]
