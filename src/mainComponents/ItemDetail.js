@@ -57,49 +57,80 @@ const Colection = function (props) {
     setSpinBuy(true);
     setDisableBuySell(true);
     try{
-      const web3Modal = new Web3Modal()
+    const web3Modal = new Web3Modal()
     const connection = await web3Modal.connect()
     const provider = new ethers.providers.Web3Provider(connection)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(marketplaceContractAdress, marketplaceABI, signer)
-
     const price = ethers.utils.parseUnits(nft.price.toString(), 'ether')
     const transaction = await contract.createMarketSale(nftContractAddress, nft.itemId, {
       value: price
     })
     await transaction.wait()
+    setSpinBuy(false);
+    setDisableBuySell(true);
+    setAlertMsg("Wow! You own this Nft now")
+    setAlert(true)
     }
     catch(e){
       setSpinBuy(false);
-    setDisableBuySell(false);
-    console.log("buy failed");
-    setAlertMsg("buy failed");
-    setAlert(true);
-    window.scrollTo({
+      setDisableBuySell(false);
+      console.log("buy failed");
+      setAlertMsg("buy failed");
+      setAlert(true);
+      window.scrollTo({
       top: 0,
       behavior: "smooth"
-    });
+      });
     }
-
+    
   }
   async function sellNft(nft) {
     setSpinBuy(true);
     setDisableBuySell(true);
-
+    if (!parseFloat(sell_price)) {
+      // alert("Invalid price")
+      this.setState({ buttonDisable: false,alertMsg:"invalid price" });
+      this.setState({alert:true});
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+      return
+    }
     try{
-
+      const web3Modal = new Web3Modal()
+      const connection = await web3Modal.connect()
+      const provider = new ethers.providers.Web3Provider(connection)
+      const signer = provider.getSigner()
+      const contract = new ethers.Contract(marketplaceContractAdress, marketplaceABI, signer)
+      let listingPrice = await contract.getListingPrice()
+      listingPrice = listingPrice.toString()
+      console.log(listingPrice)
+      const price = ethers.utils.parseUnits(sell_price, 'ether')
+      console.log("price" + price)
+      console.log("itemId"+nft.itemId)
+      let transaction = await contract.resellNft(nftContractAddress, nft.tokenId, nft.itemId,price, { value: listingPrice })
+      await transaction.wait()
+      setAlertMsg("Wow! Nft listed for sale");
+      setAlert(true);
+      setSpinBuy(false);
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
     }
     catch(e){
+      console.log(e)
       setSpinBuy(false);
-    setDisableBuySell(false);
-    setAlertMsg("sell failed");
-    setAlert(true);
-    window.scrollTo({
+      setDisableBuySell(false);
+      setAlertMsg("sell failed");
+      setAlert(true);
+      window.scrollTo({
       top: 0,
       behavior: "smooth"
     });
     }
-
 
   }
   return (
@@ -129,7 +160,7 @@ const Colection = function (props) {
               </div>
               <p>{data.description}</p>
               {/* <h5>Price</h5> */}
-             {!isBuy && <input type="number" name="item_price" id="item_price" className="form-control" placeholder="enter price to Buy (ETH)" onChange={(e) => {
+             {!isBuy && <input type="number" name="item_price" id="item_price" className="form-control" placeholder="enter price to sell at (ETH)" onChange={(e) => {
                 setSellprice(e.target.value);
                 // console.log(sell_price);
               }

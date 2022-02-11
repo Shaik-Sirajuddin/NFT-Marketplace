@@ -32,8 +32,10 @@ export default class Responsive extends Component {
         this.onImgLoad = this.onImgLoad.bind(this);
     }
     async fetchMarketItems(){
-          
-        let provider = ethers.getDefaultProvider('rinkeby');
+        //let provider = ethers.getDefaultProvider('rinkeby');
+        const projectId = '17f515bfae1c44e398fcedcd2966dbe4'
+        const projectSecret = '9cedf13c05494e4eb24c80d96c3a76d4'
+        let provider = ethers.getDefaultProvider('rinkeby',{ projectId, projectSecret });
         const tokenContract = new ethers.Contract(nftContractAddress, nftContractABI, provider)
         const marketContract = new ethers.Contract(marketplaceContractAdress, marketplaceABI, provider)
         const data = await marketContract.fetchMarketItems()
@@ -56,13 +58,15 @@ export default class Responsive extends Component {
           this.nftsList = items
         this.setState({
             nfts: this.nftsList.slice(0, 8),
+            ProgressBar:false,
+            mynftsnull:this.nftsList.size===0
         });
         
     }
     async fecthMyAssets(){
         try{
 
-        const web3Modal = new Web3Modal({
+         const web3Modal = new Web3Modal({
             network: "mainnet",
             cacheProvider: true,
           })
@@ -86,6 +90,7 @@ export default class Responsive extends Component {
             let price = ethers.utils.formatUnits(i.price.toString(), 'ether')
             let item = {
               price,
+              itemId: i.itemId.toNumber(),
               tokenId: i.tokenId.toNumber(),
               seller: i.seller,
               owner: i.owner,
@@ -150,7 +155,7 @@ export default class Responsive extends Component {
 
                   </div>
                   }
-                  { isHome?<div className="container">
+                  { isHome? this.state.mynftsnull && <div className="container">
                       No items to show
                   </div>:this.state.mynftsnull &&
                       <div className="container">

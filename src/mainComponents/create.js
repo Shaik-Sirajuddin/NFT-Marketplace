@@ -108,8 +108,6 @@ export default class Createpage extends Component {
       /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
       this.createSale(url)
 
-
-
     } catch (error) {
       // alert("Error uploading file");
       this.setState({ buttonDisable: false,alertMsg:"Error uploading file"});
@@ -185,6 +183,7 @@ export default class Createpage extends Component {
       });
     } catch (e) {
       // alert("error occurred");
+      console.log(e);
       this.setState({ show: false, buttonDisable: false,alertMsg:"error occurred"});
       this.setState({alert:true});
       window.scrollTo({
@@ -283,9 +282,6 @@ export default class Createpage extends Component {
                     // this.setState({buttonDisable:true});
 
                   }} type="button" id="submit" disabled={this.state.buttonDisable} className="btn-main" value="Create Item" />
-
-
-
 
 
                 </div>
