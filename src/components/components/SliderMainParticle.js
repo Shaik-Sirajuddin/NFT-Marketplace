@@ -74,7 +74,7 @@ const slidermainparticle= () => (
           </div>
           <div className="col-md-6 xs-hide">
           <Reveal className='onStep d-inline' keyframes={inline} delay={300} duration={1200} triggerOnce>
-              <img src="./img/misc/3.jpg" style={{"width":450,"height":600}} className="img-fluid" alt=""/>
+              <img src="./img/misc/3.png" style={{"width":450,"height":600}} className="img-fluid" alt=""/>
           </Reveal>
           </div>
       </div>
